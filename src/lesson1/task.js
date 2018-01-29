@@ -46,6 +46,7 @@ const compareByType = (a, b) => {
 
   return result;
 };
+
 // Numbers
 /*
   Напишите функцию, которая принимает 1 аргумент,
@@ -141,8 +142,15 @@ const without = (arrA, arrB) => arrA.filter(number => !arrB.includes(number));
   '12/6' => 2
 */
 const calcExpression = expression => {
-  const [, n1, operand, n2] = expression.match(/(\d)([+-/*])(\d)/);
-  // return n1 operand n2;
+  const [, n1, operand, n2] = expression.match(/^([-]?[a-zA-Z0-9\s]+)([+-/*])([-]?[a-zA-Z0-9\s]+)$/);
+  const evalByOperand = ({
+    '+': (a, b) => a + b,
+    '-': (a, b) => a - b,
+    '*': (a, b) => a * b,
+    '/': (a, b) => a / b,
+  })[operand];
+
+  return evalByOperand(Number(n1), Number(n2));
 };
 /*
   Напишите функцию, которая принимает строку,
@@ -153,7 +161,24 @@ const calcExpression = expression => {
   '100>5' => true
 */
 const calcComparison = expression => {
+  const [, n1, operand, n2] = expression
+    .replace(/\s/g, '')
+    .match(/^([-]?[a-zA-Z0-9.]+)(<|>|>=|<=|=)([-]?[a-zA-Z0-9.]+)$/);
 
+  /* eslint no-restricted-globals: ["error", "event"] */
+  if (isNaN(+n1) || isNaN(+n2)) {
+    throw new Error('Invalid type');
+  }
+
+  const evalByOperand = ({
+    '>': (a, b) => a > b,
+    '<': (a, b) => a < b,
+    '=': (a, b) => a === b,
+    '>=': (a, b) => a >= b,
+    '<=': (a, b) => a <= b,
+  })[operand];
+
+  return evalByOperand(Number(n1), Number(n2));
 };
 /*
   Напишите функцию, которая принимает обьект и строку,
@@ -168,7 +193,7 @@ const evalKey = (obj, expression) => {
   const path = expression.slice(1).split('.');
 
   return path.reduce((obj, property) => {
-    if (!obj[property]) throw new Error('not found');
+    if (!obj[property]) throw new Error('Not found');
     return obj[property];
   }, obj);
 };
