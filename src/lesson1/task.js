@@ -1,10 +1,8 @@
 /*
   Напишите функцию, которая принимает 1 аргумент и возварщает его тип
 */
-function getDataType(variable) {
 
-}
-
+const getDataType = variable => typeof variable;
 /*
   Напишите функцию, которая принимает 1 аргумент и возвращает:
   'primitive' если тип данных относится к примивным
@@ -13,118 +11,128 @@ function getDataType(variable) {
   'object-array' - если массив
   'object-function' - если функция
 */
-function getDataTypePseudoName(variable) {
+const getDataTypePseudoName = variable => {
+  let result = 'primitive';
 
-}
+  /* eslint-disable eqeqeq */
+  if (variable == undefined) {
+    result = 'primitive-special';
+  } else if (Array.isArray(variable)) {
+    result = 'object-array';
+  } else if (typeof variable === 'function') {
+    result = 'object-function';
+  } else if (typeof varibale === 'object') {
+    result = 'object';
+  }
 
-
+  return result;
+};
 /*
   Напишите функцию, которая принимает 2 аргумента,
   и возврвщает 1 если их значения и их типы равны,
   0 если равны только значения
   и -1 в другом случае
 */
-function compareByType(a, b) {
+const compareByType = (a, b) => {
+  let result;
 
-}
+  if (a === b) {
+    result = 1;
+  } else if (a == b) {
+    result = 0;
+  } else {
+    result = -1;
+  }
 
+  return result;
+};
 // Numbers
-
 /*
   Напишите функцию, которая принимает 1 аргумент,
   и в случае если аргумент имеет числовой тип увеличивает его на 1
   и возврвщвет результат,
   в любом другом случае возврвщвет -1
 */
-function increase(value) {
+const increase = value => {
+  let result;
 
-}
+  if (typeof value === 'number') {
+    result = ++value;
+  } else {
+    result = -1;
+  }
 
+  return result;
+};
 /*
   Напишите функцию, которая принимает 1 аргумент(число),
   и в случае если аргумент не Infinity или NaN возвращает строку 'safe' иначе 'danger'
 */
-function testForSafeNumber(value) {
-
-}
-
-
-
+const testForSafeNumber = value => (
+  Number.isFinite(value) && !Number.isNaN(value) ? 'safe' : 'danger'
+);
 // Strings
-
 /*
   Напишите функцию, которая принимает 1 аргумент (строку),
   и возвращает массив из елементов строки разделенных по пробелу ' '
 */
-function stringToArray(str) {
-
-}
-
-
+const stringToArray = str => str.split(' ');
 /*
   Напишите функцию, которая принимает 1 аргумент (строку),
   и возвращает часть этой строки до первой запятой
 */
-function getStringPart(str) {
-
-}
-
+const getStringPart = str => {
+  const isComa = str.includes(',');
+  return str.slice(0, isComa ? str.indexOf(',') : str.length);
+};
 /*
   Напишите функцию, которая принимает 2 аргумента (строку и симовл),
   и возвращает порядковый номер симовола в строе если символ встречается в строке 1 раз,
   false в противоположном случае
 */
-function isSingleSymbolMatch(str, symbol) {
+const isSingleSymbolMatch = (str, symbol) => {
+  const index = str.indexOf(symbol);
+  const result = index >= 0 && str.lastIndexOf(symbol) === index ? index : false;
 
-}
-
+  return result;
+};
 /*
   Напишите функцию, которая принимает 2 аргумента,
   массив в разделитель[опционально],
   и возвращает строку ввиде элементов массива c разделителями если разделитель задан
   или строку разделенную "-" если не задан
 */
-function join(array, separator) {
-
-}
-
-
+const join = (array, separator) => array.join(separator ? separator : '-');
 /*
   Напишите функцию, которая принимает 2 массива,
   и возвращает один состоящий из элементов перового и второго (последовательно сначала первый потом второй)
 */
-function glue(arrA, arrB) {
-
-}
-
-
+const glue = (arrA, arrB) => [...arrA, ...arrB];
 /*
   Напишите функцию, которая принимает 1 массив,
   и возвращает другой массив отсортированный от большего к меньшему
 */
-function order(arr) {
+const order = arr => arr.slice().sort((a, b) => {
+  let value = 0;
 
-}
+  if (a > b) value = -1;
+  if (a < b) value = 1;
 
+  return value;
+});
 
 /*
   Напишите функцию, которая принимает 1 массив,
   и возвращает другой без чисел которые меньше 0
 */
-function removeNegative(arr) {
-
-}
-
+const removeNegative = arr => arr.filter(number => number >= 0);
 /*
   Напишите функцию, которая принимает 2 числовых массива,
   и возвращает новый массив, состоящий из элементов первого но без элементов
   которые присутствуют во втром
   [1,2,3], [1, 3] => [2]
 */
-function without(arrA, arrB) {
-
-}
-
+const without = (arrA, arrB) => arrA.filter(number => !arrB.includes(number));
 /*
   Напишите функцию, которая принимает строку,
   содержащую выражение математической операции с двумя
@@ -132,10 +140,10 @@ function without(arrA, arrB) {
   Функция вычисляет выражение и возвращает число либо NaN.
   '12/6' => 2
 */
-function calcExpression(expression) {
-
-}
-
+const calcExpression = expression => {
+  const [, n1, operand, n2] = expression.match(/(\d)([+-/*])(\d)/);
+  // return n1 operand n2;
+};
 /*
   Напишите функцию, которая принимает строку,
   содержащую выражение логической операции с двумя
@@ -144,10 +152,9 @@ function calcExpression(expression) {
   либо бросает exception в случае ошибки.
   '100>5' => true
 */
-function calcComparison(expression) {
+const calcComparison = expression => {
 
-}
-
+};
 /*
   Напишите функцию, которая принимает обьект и строку,
   содержащую выражение доступа к свойствам обьекта.
@@ -156,9 +163,15 @@ function calcComparison(expression) {
   { a: { x: 2 }, b: 5 }, '.a.x' => 2
   { a: 1, b: 2 }, '.c' => exception
 */
-function evalKey(obj, expression) {
+const evalKey = (obj, expression) => {
+  if (!expression.startsWith('.')) throw new Error('expression should start with .');
+  const path = expression.slice(1).split('.');
 
-}
+  return path.reduce((obj, property) => {
+    if (!obj[property]) throw new Error('not found');
+    return obj[property];
+  }, obj);
+};
 
 export default {
   getDataType,
@@ -176,5 +189,5 @@ export default {
   without,
   calcExpression,
   calcComparison,
-  evalKey
+  evalKey,
 };
