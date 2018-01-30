@@ -54,17 +54,9 @@ const compareByType = (a, b) => {
   и возврвщвет результат,
   в любом другом случае возврвщвет -1
 */
-const increase = value => {
-  let result;
-
-  if (typeof value === 'number') {
-    result = ++value;
-  } else {
-    result = -1;
-  }
-
-  return result;
-};
+const increase = value => (
+  typeof value === 'number' ? value + 1 : -1
+);
 /*
   Напишите функцию, которая принимает 1 аргумент(число),
   и в случае если аргумент не Infinity или NaN возвращает строку 'safe' иначе 'danger'
@@ -82,10 +74,9 @@ const stringToArray = str => str.split(' ');
   Напишите функцию, которая принимает 1 аргумент (строку),
   и возвращает часть этой строки до первой запятой
 */
-const getStringPart = str => {
-  const isComa = str.includes(',');
-  return str.slice(0, isComa ? str.indexOf(',') : str.length);
-};
+const getStringPart = str => (
+  str.slice(0, str.includes(',') ? str.indexOf(',') : str.length)
+);
 /*
   Напишите функцию, которая принимает 2 аргумента (строку и симовл),
   и возвращает порядковый номер симовола в строе если символ встречается в строке 1 раз,
@@ -103,7 +94,7 @@ const isSingleSymbolMatch = (str, symbol) => {
   и возвращает строку ввиде элементов массива c разделителями если разделитель задан
   или строку разделенную "-" если не задан
 */
-const join = (array, separator) => array.join(separator ? separator : '-');
+const join = (array, separator) => array.join(separator || '-');
 /*
   Напишите функцию, которая принимает 2 массива,
   и возвращает один состоящий из элементов перового и второго (последовательно сначала первый потом второй)
@@ -113,14 +104,16 @@ const glue = (arrA, arrB) => [...arrA, ...arrB];
   Напишите функцию, которая принимает 1 массив,
   и возвращает другой массив отсортированный от большего к меньшему
 */
-const order = arr => arr.slice().sort((a, b) => {
+const comparator = (a, b) => {
   let value = 0;
 
   if (a > b) value = -1;
   if (a < b) value = 1;
 
   return value;
-});
+};
+
+const order = arr => arr.slice().sort(comparator);
 
 /*
   Напишите функцию, которая принимает 1 массив,
@@ -141,16 +134,22 @@ const without = (arrA, arrB) => arrA.filter(number => !arrB.includes(number));
   Функция вычисляет выражение и возвращает число либо NaN.
   '12/6' => 2
 */
+const parseCalcExpression = expression => (
+  expression
+    .replace(/\s/g, '')
+    .match(/^([-]?[a-zA-Z0-9.]+)([+-/*])([-]?[a-zA-Z0-9.]+)$/)
+);
 const calcExpression = expression => {
-  const [, n1, operand, n2] = expression.match(/^([-]?[a-zA-Z0-9\s]+)([+-/*])([-]?[a-zA-Z0-9\s]+)$/);
-  const evalByOperand = ({
+  const [, leftOperand, operator, rightOperand] = parseCalcExpression(expression);
+
+  const evalByOperator = ({
     '+': (a, b) => a + b,
     '-': (a, b) => a - b,
     '*': (a, b) => a * b,
     '/': (a, b) => a / b,
-  })[operand];
+  })[operator];
 
-  return evalByOperand(Number(n1), Number(n2));
+  return evalByOperator(+leftOperand, +rightOperand);
 };
 /*
   Напишите функцию, которая принимает строку,
@@ -160,25 +159,28 @@ const calcExpression = expression => {
   либо бросает exception в случае ошибки.
   '100>5' => true
 */
-const calcComparison = expression => {
-  const [, n1, operand, n2] = expression
+const parseComparisonExpression = expression => (
+  expression
     .replace(/\s/g, '')
-    .match(/^([-]?[a-zA-Z0-9.]+)(<|>|>=|<=|=)([-]?[a-zA-Z0-9.]+)$/);
+    .match(/^([-]?[a-zA-Z0-9.]+)(<|>|>=|<=|=)([-]?[a-zA-Z0-9.]+)$/)
+);
+const calcComparison = expression => {
+  const [, leftOperand, operator, rightOperand] = parseComparisonExpression(expression);
 
   /* eslint no-restricted-globals: ["error", "event"] */
-  if (isNaN(+n1) || isNaN(+n2)) {
+  if (isNaN(leftOperand) || isNaN(rightOperand)) {
     throw new Error('Invalid type');
   }
 
-  const evalByOperand = ({
+  const evalByOperator = ({
     '>': (a, b) => a > b,
     '<': (a, b) => a < b,
     '=': (a, b) => a === b,
     '>=': (a, b) => a >= b,
     '<=': (a, b) => a <= b,
-  })[operand];
+  })[operator];
 
-  return evalByOperand(Number(n1), Number(n2));
+  return evalByOperator(+leftOperand, +rightOperand);
 };
 /*
   Напишите функцию, которая принимает обьект и строку,
@@ -194,6 +196,7 @@ const evalKey = (obj, expression) => {
 
   return path.reduce((obj, property) => {
     if (!obj[property]) throw new Error('Not found');
+
     return obj[property];
   }, obj);
 };
