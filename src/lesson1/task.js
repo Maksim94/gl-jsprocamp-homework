@@ -139,17 +139,18 @@ const parseCalcExpression = expression => (
     .replace(/\s/g, '')
     .match(/^([-]?[a-zA-Z0-9.]+)([+-/*])([-]?[a-zA-Z0-9.]+)$/)
 );
+const getCalcFunctionByOperator = operator => ({
+  '+': (a, b) => a + b,
+  '-': (a, b) => a - b,
+  '*': (a, b) => a * b,
+  '/': (a, b) => a / b,
+})[operator];
+
 const calcExpression = expression => {
   const [, leftOperand, operator, rightOperand] = parseCalcExpression(expression);
+  const calc = getCalcFunctionByOperator(operator);
 
-  const evalByOperator = ({
-    '+': (a, b) => a + b,
-    '-': (a, b) => a - b,
-    '*': (a, b) => a * b,
-    '/': (a, b) => a / b,
-  })[operator];
-
-  return evalByOperator(+leftOperand, +rightOperand);
+  return calc(+leftOperand, +rightOperand);
 };
 /*
   Напишите функцию, которая принимает строку,
@@ -164,6 +165,14 @@ const parseComparisonExpression = expression => (
     .replace(/\s/g, '')
     .match(/^([-]?[a-zA-Z0-9.]+)(<|>|>=|<=|=)([-]?[a-zA-Z0-9.]+)$/)
 );
+const getComparisonFunctionByOperator = operator => ({
+  '>': (a, b) => a > b,
+  '<': (a, b) => a < b,
+  '=': (a, b) => a === b,
+  '>=': (a, b) => a >= b,
+  '<=': (a, b) => a <= b,
+})[operator];
+
 const calcComparison = expression => {
   const [, leftOperand, operator, rightOperand] = parseComparisonExpression(expression);
 
@@ -172,15 +181,9 @@ const calcComparison = expression => {
     throw new Error('Invalid type');
   }
 
-  const evalByOperator = ({
-    '>': (a, b) => a > b,
-    '<': (a, b) => a < b,
-    '=': (a, b) => a === b,
-    '>=': (a, b) => a >= b,
-    '<=': (a, b) => a <= b,
-  })[operator];
+  const compare = getComparisonFunctionByOperator(operator);
 
-  return evalByOperator(+leftOperand, +rightOperand);
+  return compare(+leftOperand, +rightOperand);
 };
 /*
   Напишите функцию, которая принимает обьект и строку,
