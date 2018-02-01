@@ -3,16 +3,14 @@
   Function should return a number - amount of optional parameters that were passed into function.
   Hint: you are allowed to modify both function definition and function body.
 */
-export function countOptional() {
-
-}
+export const countOptional = (first, second, ...args) => args.length;
 
 /*
   Write your implementation of native Function.prototype.bind method
 */
-export function bindContext(fn, context) {
-
-}
+export const bindContext = (fn, context, ...outerArgs) => (...args) => (
+  fn.apply(context, [...outerArgs, ...args])
+);
 
 
 /*
@@ -29,25 +27,35 @@ export function bindContext(fn, context) {
 
   Take to account, that you should track log call index starting from 1
 */
-export function addLogCapability(object) {
-
-}
+const getLoggerMessage = object => (
+  object.name
+    ? `Log message #${object.i}: my name is ${object.name}`
+    : `Log message #${object.i}: I dont have name`
+);
+export const addLogCapability = object => {
+  object.i = 0;
+  object.log = function log() {
+    object.i += 1;
+    return getLoggerMessage(object);
+  };
+};
 
 /*
   Write a function that creates custom topic logger:
   myLogger = logger('My Topic')
   myLogger('first message'); //=> My Topic: first message
 */
-export function logger(topic) {
-
-}
+export const logger = topic => message => `${topic}: ${message}`;
 
 /*
   Implement left to right compose function
 */
-export function compose() {
 
-}
+// Ectualy it's pipe, not compose
+/* Compose looks like (from right to left):
+  const compose = (...fns) => x => fns.reduceRight((f, g) => g(f), x);
+*/
+export const compose = (...fns) => x => fns.reduce((f, g) => g(f), x);
 
 /*
   Implement function that can turn function into partial application
@@ -59,9 +67,7 @@ export function compose() {
   const sumWith4 = partialSum(4);
   sumWith4(5) // 9
 */
-export function partial(fn) {
-
-}
+export const partial = fn => (...args) => fn.bind(null, ...args);
 
 export default {
   countOptional,
@@ -69,5 +75,5 @@ export default {
   addLogCapability,
   logger,
   compose,
-  partial
+  partial,
 };

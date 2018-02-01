@@ -21,7 +21,7 @@ const getDataTypePseudoName = variable => {
     result = 'object-array';
   } else if (typeof variable === 'function') {
     result = 'object-function';
-  } else if (typeof varibale === 'object') {
+  } else if (typeof variable === 'object') {
     result = 'object';
   }
 
