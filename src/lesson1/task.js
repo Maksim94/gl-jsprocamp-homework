@@ -2,7 +2,35 @@
   Напишите функцию, которая принимает 1 аргумент и возварщает его тип
 */
 
-const getDataType = variable => typeof variable;
+function checkOneArgument (args) {
+  if (args.length !== 1) throw new Error('It should be one argument');
+  return true;
+
+function checkOneStrArgument (args) {
+  if (args.length !== 1 || args[0] !== 'string') {
+    throw new Error ('It shoud be one string argument');
+  }
+
+  return true;
+}
+
+function checkOneArrayArgument (args) {
+  if (args.length !== 1 || Array.isArray(args[0])) {
+    throw new Error ('It shoud be one array argument');
+  }
+
+  return true;
+}
+
+function checkTwoArguments (args) {
+  if (args.length !== 2) throw new Error('It should be two arguments');
+  return true;
+}
+
+function getDataType (variable) {
+  checkOneArgument(arguments);
+  return typeof variable;
+}
 /*
   Напишите функцию, которая принимает 1 аргумент и возвращает:
   'primitive' если тип данных относится к примивным
@@ -11,7 +39,8 @@ const getDataType = variable => typeof variable;
   'object-array' - если массив
   'object-function' - если функция
 */
-const getDataTypePseudoName = variable => {
+function getDataTypePseudoName (variable) {
+  checkOneArgument(arguments);
   let result = 'primitive';
 
   /* eslint-disable eqeqeq */
@@ -33,7 +62,8 @@ const getDataTypePseudoName = variable => {
   0 если равны только значения
   и -1 в другом случае
 */
-const compareByType = (a, b) => {
+function compareByType (a, b) {
+  checkTwoArguments(arguments);
   let result;
 
   if (a === b) {
@@ -54,35 +84,46 @@ const compareByType = (a, b) => {
   и возврвщвет результат,
   в любом другом случае возврвщвет -1
 */
-const increase = value => (
-  typeof value === 'number' ? value + 1 : -1
-);
+function increase (value) {
+  checkOneArgument(arguments);
+  return typeof value === 'number' ? ++value : -1
+}
 /*
   Напишите функцию, которая принимает 1 аргумент(число),
   и в случае если аргумент не Infinity или NaN возвращает строку 'safe' иначе 'danger'
 */
-const testForSafeNumber = value => (
-  Number.isFinite(value) && !Number.isNaN(value) ? 'safe' : 'danger'
-);
+function testForSafeNumber (value) {
+  checkOneArgument(arguments);
+  return Number.isFinite(value) && !Number.isNaN(value) ? 'safe' : 'danger'
+}
 // Strings
 /*
   Напишите функцию, которая принимает 1 аргумент (строку),
   и возвращает массив из елементов строки разделенных по пробелу ' '
 */
-const stringToArray = str => str.split(' ');
+function stringToArray (str) {
+  checkOneArgument(arguments);
+  return str.split(' ');
+}
 /*
   Напишите функцию, которая принимает 1 аргумент (строку),
   и возвращает часть этой строки до первой запятой
 */
-const getStringPart = str => (
-  str.slice(0, str.includes(',') ? str.indexOf(',') : str.length)
-);
+function getStringPart (str) {
+  checkOneStrArgument(arguments);
+  return str.slice(0, str.includes(',') ? str.indexOf(',') : str.length);
+};
 /*
   Напишите функцию, которая принимает 2 аргумента (строку и симовл),
   и возвращает порядковый номер симовола в строе если символ встречается в строке 1 раз,
   false в противоположном случае
 */
-const isSingleSymbolMatch = (str, symbol) => {
+function isSingleSymbolMatch (str, symbol) {
+  checkTwoArguments(arguments);
+  if (typeof str !== 'string' || typeof symbol !== 'string') {
+    throw new Error('It should be two string arguments');
+  }
+
   const index = str.indexOf(symbol);
   const result = index >= 0 && str.lastIndexOf(symbol) === index ? index : false;
 
@@ -94,12 +135,26 @@ const isSingleSymbolMatch = (str, symbol) => {
   и возвращает строку ввиде элементов массива c разделителями если разделитель задан
   или строку разделенную "-" если не задан
 */
-const join = (array, separator) => array.join(separator || '-');
+function join (array, separator) {
+  checkTwoArguments(arguments);
+  if (Array.isArray(array) && typeof separator === 'string') {
+    return array.join(separator || '-');
+  } else {
+    throw new Error('Invalid data type');
+  }
+}
 /*
   Напишите функцию, которая принимает 2 массива,
   и возвращает один состоящий из элементов перового и второго (последовательно сначала первый потом второй)
 */
-const glue = (arrA, arrB) => [...arrA, ...arrB];
+function glue (arrA, arrB) {
+  checkTwoArguments(arguments);
+  if (Array.isArray(arrA) && Array.isArray(arrB)) {
+    return [...arrA, ...arrB];
+  } else {
+    throw new Error('It should be two arrays');
+  }
+} 
 /*
   Напишите функцию, которая принимает 1 массив,
   и возвращает другой массив отсортированный от большего к меньшему
@@ -113,20 +168,32 @@ const comparator = (a, b) => {
   return value;
 };
 
-const order = arr => arr.slice().sort(comparator);
+function order (arr) {
+  checkOneArrayArgument(arguments);
+  return arr.slice().sort(comparator);
+}
 
 /*
   Напишите функцию, которая принимает 1 массив,
   и возвращает другой без чисел которые меньше 0
 */
-const removeNegative = arr => arr.filter(number => number >= 0);
+function removeNegative (arr) {
+  checkOneArrayArgument(arguments);
+  return arr.filter(number => number >= 0);
+}
 /*
   Напишите функцию, которая принимает 2 числовых массива,
   и возвращает новый массив, состоящий из элементов первого но без элементов
   которые присутствуют во втром
   [1,2,3], [1, 3] => [2]
 */
-const without = (arrA, arrB) => arrA.filter(number => !arrB.includes(number));
+const without = (arrA, arrB) => {
+  if (glue(arrA, arrB).every(i => typeof i === 'number')) {
+    return arrA.filter(number => !arrB.includes(number));
+  } else {
+    throw new Error('It should be all numbers');
+  }
+}
 /*
   Напишите функцию, которая принимает строку,
   содержащую выражение математической операции с двумя
