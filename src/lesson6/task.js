@@ -1,44 +1,42 @@
 // с помощью Fetch API и swapi.co API получить следующие данные
-const STATUS_OK = 200;
 // Климат на любой планете по её имени
 // {planetName} – String
-const getPlanetEndPoint = planetName => `https://swapi.co/api/planets/?search=${planetName}`;
-const getProfileEndPoint = name => `https://swapi.co/api/people/?search=${name}`;
-const getVehicleEndPoint = shipName => `https://swapi.co/api/vehicles/?search=${shipName}`;
+const getPlanetUrl = planetName => `https://swapi.co/api/planets/?search=${planetName}`;
+const getProfileUrl = name => `https://swapi.co/api/people/?search=${name}`;
+const getStarshipsUrl = shipName => `https://swapi.co/api/starships/?search=${shipName}`;
 
-const sendRequest = endPoint => fetch(endPoint).then(response => 
-  response.json().then(data => ({
-    success: response.status === STATUS_OK,
-    data,
-  }))
-);
+async function sendRequest(url) {
+  try {
+    const response = await fetch(url);
+    const { results } = await response.json();
+
+    return results;
+  } catch (error) {
+    throw new Error ('Error while fetching', error);
+  }
+}
 
 const checkResult = ({ results }) => results && results[0];
 
 async function getClimate (planetName) {
-    const { data, success } = await sendRequest(getPlanetEndPoint(planetName));
+  try {
+    const planets = await sendRequest(getPlanetUrl(planetName));
+    const { climate } = planets[0];
 
-    if (!success) throw new Error(`Error: ${data.detail}`);
-
-    if (checkResult(data)) {
-      const { climate } = data.results[0];
-      return climate;
-    } else {
-      throw new Error('Something went wrong');
-    }
+    return climate;
+  } catch (error) {
+    throw new Error('Error', error);
+  }
 }
 
 // Получить информацию (Object) о любом персонаже по имени
 // {name} – String
 async function getProfile (name) {
-  const { data, success } = await sendRequest(getProfileEndPoint(planetName));
-
-  if (!success) throw new Error(`Error: ${data.detail}`);
-
-  if (checkResult(data)) {
-    return data.results[0];
-  } else {
-    throw new Error('Something went wrong');
+  try {
+    const profiles = await sendRequest(getProfileUrl(name));
+    return profiles[0];
+  } catch (error) {
+    throw new Error('Something went wrong', error);
   }
 }
 
@@ -46,17 +44,17 @@ async function getProfile (name) {
 // по его названию
 // {starshipName} - String
 async function getPilots (starshipName) {
-  const { data, success } = await sendRequest(getVehicleEndPoint(starshipName));
+  try {
+    const vehicles = await sendRequest(getStarshipsUrl(starshipName));
+    const { pilots: pilotUrls } = vehicles[0];
 
-  if (!success) throw new Error(`Error: ${data.detail}`);
+    const result = await Promise.all(pilotUrls.map(url =>
+      fetch(url).then(data => data.json().then(people => people.name))
+    ));
 
-  if (checkResult(data)) {
-    const { pilots: pilotUrls } = data.results[0];
-    const { data: pilots } = await Promise.all(pilotUrls.map(pilotUrl => sendRequest(pilotUrl)));
-
-    return pilots.map(pilot => pilot.name);
-  } else {
-    throw new Error('Something went wrong');
+    return result;
+  } catch (error) {
+    throw new Error ('Error', error);
   }
 }
 
